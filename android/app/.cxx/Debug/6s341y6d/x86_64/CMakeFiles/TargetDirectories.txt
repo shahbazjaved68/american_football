@@ -1,0 +1,2 @@
+C:/Users/LENOVO/Desktop/NFL2024-205/nfl/android/app/.cxx/Debug/6s341y6d/x86_64/CMakeFiles/edit_cache.dir
+C:/Users/LENOVO/Desktop/NFL2024-205/nfl/android/app/.cxx/Debug/6s341y6d/x86_64/CMakeFiles/rebuild_cache.dir

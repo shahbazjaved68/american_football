@@ -1,0 +1,76 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services"
+}
+
+// ✅ Keystore setup remains same
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+android {
+    namespace "com.nfl.livescore"
+    compileSdk flutter.compileSdkVersion
+
+    ndkVersion "27.2.12479018"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+        coreLibraryDesugaringEnabled true
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
+    }
+
+    defaultConfig {
+        applicationId "com.nfl.livescore"
+        minSdkVersion 23
+        targetSdkVersion flutter.targetSdkVersion
+
+        versionCode 10
+        versionName "1.1.0"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties["keyAlias"]
+            keyPassword keystoreProperties["keyPassword"]
+            storeFile keystoreProperties["storeFile"] ? rootProject.file(keystoreProperties["storeFile"]) : null
+            storePassword keystoreProperties["storePassword"]
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+flutter {
+    source "../.."
+}
+
+dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.4'
+
+    // ✅ Firebase BOM keeps versions aligned
+    implementation platform("com.google.firebase:firebase-bom:33.7.0")
+    implementation "com.google.firebase:firebase-analytics"
+    implementation "com.google.firebase:firebase-messaging"
+
+    // ✅ Ads
+    implementation "com.google.android.gms:play-services-ads:23.6.0"
+
+    // ✅ Required for local notifications on Android
+    implementation "androidx.core:core-ktx:1.13.1"
+}

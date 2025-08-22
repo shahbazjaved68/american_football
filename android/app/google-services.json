@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "141761868158",
+    "project_id": "national-footbal-league",
+    "storage_bucket": "national-footbal-league.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141761868158:android:41ae62208ec459946e832f",
+        "android_client_info": {
+          "package_name": "com.nfl.livescore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAXnWtT2fzmzFuLrX05TPw8FKQlodPp2DM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

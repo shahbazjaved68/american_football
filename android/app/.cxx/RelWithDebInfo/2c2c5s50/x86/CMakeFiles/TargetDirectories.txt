@@ -1,0 +1,2 @@
+F:/Football Statistics/NFL2024-205/nfl/android/app/.cxx/RelWithDebInfo/2c2c5s50/x86/CMakeFiles/edit_cache.dir
+F:/Football Statistics/NFL2024-205/nfl/android/app/.cxx/RelWithDebInfo/2c2c5s50/x86/CMakeFiles/rebuild_cache.dir
