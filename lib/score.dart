@@ -268,7 +268,8 @@ class Competitor {
 
   factory Competitor.fromJson(Map<String, dynamic> json) {
     return Competitor(
-      shortName: json['shortName'] ?? 'Unknown',
+      // shortName: json['shortName'] ?? 'Unknown',
+      shortName: json['shortName'] ?? json['name'] ?? 'Unknown',
       score: json['score'] ?? 0,
     );
   }
