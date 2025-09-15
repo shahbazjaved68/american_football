@@ -9,14 +9,15 @@ import 'Admob/native_ads.dart';
 import 'livestream.dart'; // Live stream screen
 import 'update_dialog.dart'; //  Update popup
 import 'fcm_setup_android.dart'; //  Firebase FCM + Notifications
+import 'share.dart'; // ✅ Share functionality
 
 AppOpenAd? openAd;
 bool _hasShownAppOpenAd = false;
 
 Future<void> loadAd() async {
   await AppOpenAd.load(
-    adUnitId: 'ca-app-pub-6736849953392817/7673389778', // actual ad unit ID
-    // adUnitId: 'ca-app-pub-3940256099942544/3419835294', // test ad unit ID
+     // adUnitId: 'ca-app-pub-6736849953392817/7673389778', // actual ad unit ID
+     adUnitId: 'ca-app-pub-3940256099942544/3419835294', // test ad unit ID
     request: const AdRequest(),
     adLoadCallback: AppOpenAdLoadCallback(
       onAdLoaded: (ad) {
@@ -220,6 +221,13 @@ class _MainPageState extends State<MainPage> with WidgetsBindingObserver {
       appBar: AppBar(
         title: Text(_getTitle()),
         actions: [
+          IconButton(
+            icon: Icon(Icons.share), // ✅ Share button
+            tooltip: "Share App",
+            onPressed: () {
+              ShareApp.shareApp(); // ✅ Call share function
+            },
+          ),
           IconButton(
             icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
             tooltip: isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode',

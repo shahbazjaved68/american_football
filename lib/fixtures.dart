@@ -38,7 +38,14 @@ class _FixturesScreenState extends State<FixturesScreen> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       setState(() {
-        fixtures = data['events'] as List;
+        fixtures = (data['events'] as List)
+            // ✅ filter out past matches (only keep upcoming or live)
+            .where((event) {
+              final matchDate = DateTime.tryParse(event['date'] ?? '')?.toLocal();
+              if (matchDate == null) return false;
+              return matchDate.isAfter(DateTime.now().subtract(const Duration(hours: 2)));
+            })
+            .toList();
         isLoading = false;
       });
     } else {
@@ -132,11 +139,11 @@ class _FixturesScreenState extends State<FixturesScreen> {
                       final competitors = comps.isNotEmpty ? comps[0]['competitors'] ?? [] : [];
                       final home = competitors.firstWhere(
                         (c) => c['homeAway'] == 'home',
-                        orElse: () => {'team': {'nickname': 'Unknown', 'logos': [{'href': ''}]}},
+                        orElse: () => {'team': {'nickname': 'Unknown', 'logos': [{'href': ''}]}}
                       );
                       final away = competitors.firstWhere(
                         (c) => c['homeAway'] == 'away',
-                        orElse: () => {'team': {'nickname': 'Unknown', 'logos': [{'href': ''}]}},
+                        orElse: () => {'team': {'nickname': 'Unknown', 'logos': [{'href': ''}]}}
                       );
                       final dt = formatDateTimeToLocal(fixture['date'] ?? '');
                       final rem = calculateRemainingTime(fixture['date'] ?? '');

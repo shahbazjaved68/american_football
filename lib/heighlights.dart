@@ -1,9 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:webview_flutter/webview_flutter.dart'; // ✅ Changed to WebView
+import 'package:webview_flutter/webview_flutter.dart';
 import 'Admob/interstitial_ads.dart';
-import 'highlights2024.dart';
 
 class Highlight {
   final String videoUrl;
@@ -48,14 +47,19 @@ class _HighlightsPageState extends State<HighlightsPage> {
     }
   }
 
+  /// ✅ Proper two-step interstitial ads before playing video
   void _handleHighlightTap(Highlight highlight) {
     InterstitialAdManager.showInterstitialAd(onAdDismissed: () {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VideoPlayerScreen(videoUrl: highlight.videoUrl),
-        ),
-      );
+      // After first ad, show second ad
+      InterstitialAdManager.showInterstitialAd(onAdDismissed: () {
+        // After second ad, open video
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VideoPlayerScreen(videoUrl: highlight.videoUrl),
+          ),
+        );
+      });
     });
   }
 
@@ -67,32 +71,6 @@ class _HighlightsPageState extends State<HighlightsPage> {
 
     return Scaffold(
       backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        title: Center(
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => Highlights2024Page()),
-              );
-            },
-            child: const Text(
-              "Highlights 2024",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-        iconTheme: IconThemeData(color: textColor),
-      ),
       body: FutureBuilder<List<Highlight>>(
         future: highlights,
         builder: (context, snapshot) {
@@ -142,7 +120,7 @@ class _HighlightsPageState extends State<HighlightsPage> {
   }
 }
 
-/// ✅ Video Player using WebView instead of YoutubePlayer
+/// ✅ Video Player using Improved WebView
 class VideoPlayerScreen extends StatefulWidget {
   final String videoUrl;
   const VideoPlayerScreen({Key? key, required this.videoUrl}) : super(key: key);
@@ -153,6 +131,7 @@ class VideoPlayerScreen extends StatefulWidget {
 
 class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
   late final WebViewController _controller;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -160,14 +139,38 @@ class _VideoPlayerScreenState extends State<VideoPlayerScreen> {
 
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..enableZoom(true)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (_) {
+            setState(() => _isLoading = true);
+          },
+          onPageFinished: (_) {
+            setState(() => _isLoading = false);
+          },
+          onWebResourceError: (error) {
+            debugPrint("WebView error: $error");
+          },
+        ),
+      )
+      ..clearCache()
       ..loadRequest(Uri.parse(widget.videoUrl));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Video Player")),
-      body: WebViewWidget(controller: _controller),
+      appBar: AppBar(), // ✅ Only back button
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(color: Colors.red),
+            ),
+        ],
+      ),
     );
   }
 }
